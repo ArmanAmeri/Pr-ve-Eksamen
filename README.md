@@ -1,2 +1,2 @@
-# Pr-ve-Eksamen
+# Prøve-Eksamen
 Web Projekt for Prøve Eksamen
