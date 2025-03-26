@@ -165,7 +165,7 @@ def signup():
     return render_template('signup.html')
 
 # Legg til en admin-bruker hvis den ikke eksisterer
-#def create_admin():
+def create_admin():
     admin = User.query.filter_by(username='admin').first()
     if not admin:
         admin = User(
@@ -178,9 +178,9 @@ def signup():
         db.session.commit()
 
 # Admin-beskyttet rute
-#@app.route('/admin')
-#@login_required
-#def admin_dashboard():
+@app.route('/admin')
+@login_required
+def admin_dashboard():
     if not current_user.is_admin:
         flash('Du har ikke tilgang til admin-dashbordet.', 'error')
         return redirect(url_for('dashboard'))
@@ -188,8 +188,8 @@ def signup():
     users = User.query.all()
     return render_template('admin/dashboard.html', users=users)
 
-#@app.route('/admin/login', methods=['GET', 'POST'])
-#def admin_login():
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -202,6 +202,27 @@ def signup():
             flash('Ugyldig admin-innlogging.', 'error')
     
     return render_template('admin/login.html')
+
+# Admin-beskyttet rute for å slette brukerkontoer
+@app.route('/admin/delete_user/<int:user_id>', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    if not current_user.is_admin:
+        flash('Du har ikke tilgang til denne handlingen.', 'error')
+        return redirect(url_for('dashboard'))
+
+    user = User.query.get(user_id)
+    
+    if user:
+        # Sletter brukeren fra databasen
+        db.session.delete(user)
+        db.session.commit()
+        flash('Brukeren har blitt slettet.', 'success')
+    else:
+        flash('Brukeren ble ikke funnet.', 'error')
+    
+    return redirect(url_for('admin_dashboard'))
+
 
 # Starter applikasjonen og oppretter databasetabeller
 if __name__ == '__main__':

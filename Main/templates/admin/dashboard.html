@@ -114,9 +114,15 @@
                                 <button class="text-indigo-600 hover:text-indigo-900">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="text-red-600 hover:text-red-900">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+
+                                <!-- Delete Button (Submit Form) -->
+                                <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Er du sikker på at du vil slette denne brukeren?');">
+                                    <button type="submit" class="text-red-600 hover:text-red-900">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+
+                                <!-- Unlock Button -->
                                 {% if user.is_locked %}
                                 <button class="text-green-600 hover:text-green-900">
                                     <i class="fas fa-unlock"></i>
@@ -135,4 +141,4 @@
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}
