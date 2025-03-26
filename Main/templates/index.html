@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - Server Hosting{% endblock %}
+
+{% block content %}
+<div class="welcome-container">
+    <div class="welcome-content">
+        <h1>Welcome to Server Hosting</h1>
+        <p>Your trusted platform for server management and hosting solutions.</p>
+        
+        {% if current_user.is_authenticated %}
+            <div class="welcome-actions">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Go to Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
+            </div>
+        {% else %}
+            <div class="welcome-actions">
+                <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+                <a href="{{ url_for('signup') }}" class="btn btn-secondary">Sign Up</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Server Hosting{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Velkomstbanner -->
+    <div class="bg-white shadow rounded-lg p-6 mb-8">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+                <p class="mt-2 text-gray-600">Oversikt over alle brukere og systemstatus</p>
+            </div>
+            <a href="{{ url_for('dashboard') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Gå til brukerdashbord
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistikk -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-indigo-100 text-indigo-600">
+                    <i class="fas fa-users text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Totalt antall brukere</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ users|length }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 text-green-600">
+                    <i class="fas fa-user-check text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Aktive brukere</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ users|selectattr('is_locked', 'equalto', false)|list|length }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-red-100 text-red-600">
+                    <i class="fas fa-user-lock text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Låste brukere</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ users|selectattr('is_locked', 'equalto', true)|list|length }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                    <i class="fas fa-user-shield text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Admin-brukere</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ users|selectattr('is_admin', 'equalto', true)|list|length }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Brukerliste -->
+    <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-medium text-gray-900">Brukeroversikt</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bruker</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">E-post</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Opprettet</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Handling</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for user in users %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">{{ user.username }}</div>
+                                    <div class="text-sm text-gray-500">ID: {{ user.id }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ user.email }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                {% if user.is_locked %}bg-red-100 text-red-800
+                                {% elif user.is_admin %}bg-yellow-100 text-yellow-800
+                                {% else %}bg-green-100 text-green-800{% endif %}">
+                                {% if user.is_locked %}Låst
+                                {% elif user.is_admin %}Admin
+                                {% else %}Aktiv{% endif %}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ user.created_at.strftime('%d.%m.%Y %H:%M') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex space-x-3">
+                                <button class="text-indigo-600 hover:text-indigo-900">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-600 hover:text-red-900">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                {% if user.is_locked %}
+                                <button class="text-green-600 hover:text-green-900">
+                                    <i class="fas fa-unlock"></i>
+                                </button>
+                                {% else %}
+                                <button class="text-yellow-600 hover:text-yellow-900">
+                                    <i class="fas fa-lock"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %} 

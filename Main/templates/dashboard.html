@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Server Hosting{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Velkomstbanner -->
+    <div class="bg-white shadow rounded-lg p-6 mb-8">
+        <h1 class="text-2xl font-bold text-gray-900">Velkommen, {{ current_user.username }}!</h1>
+        <p class="mt-2 text-gray-600">Her er oversikten over dine servere og kontoinnstillinger.</p>
+    </div>
+
+    <!-- Hovedinnhold -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Serveroversikt -->
+        <div class="md:col-span-2">
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-medium text-gray-900">Dine Servere</h2>
+                </div>
+                <div class="p-6">
+                    {% if servers %}
+                        <div class="space-y-4">
+                            {% for server in servers %}
+                            <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="text-lg font-medium text-gray-900">{{ server.name }}</h3>
+                                        <p class="text-sm text-gray-500">IP: {{ server.ip }}</p>
+                                        <p class="text-sm text-gray-500">Status: 
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                                {% if server.status == 'active' %}bg-green-100 text-green-800
+                                                {% elif server.status == 'maintenance' %}bg-yellow-100 text-yellow-800
+                                                {% else %}bg-red-100 text-red-800{% endif %}">
+                                                {{ server.status }}
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="text-indigo-600 hover:text-indigo-900">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-900">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-8">
+                            <i class="fas fa-server text-gray-400 text-4xl mb-4"></i>
+                            <p class="text-gray-500">Du har ingen servere ennå.</p>
+                            <button class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                                <i class="fas fa-plus mr-2"></i>
+                                Legg til ny server
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Kontoinnstillinger -->
+        <div class="md:col-span-1">
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-medium text-gray-900">Kontoinnstillinger</h2>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Brukernavn</label>
+                            <p class="mt-1 text-sm text-gray-900">{{ current_user.username }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">E-post</label>
+                            <p class="mt-1 text-sm text-gray-900">{{ current_user.email }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Konto opprettet</label>
+                            <p class="mt-1 text-sm text-gray-900">{{ current_user.created_at.strftime('%d.%m.%Y') }}</p>
+                        </div>
+                        <div class="pt-4">
+                            <button class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                                <i class="fas fa-cog mr-2"></i>
+                                Endre innstillinger
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistikk -->
+            <div class="mt-8 bg-white shadow rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-medium text-gray-900">Statistikk</h2>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Totalt antall servere</span>
+                            <span class="text-lg font-semibold text-gray-900">{{ servers|length if servers else 0 }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Aktive servere</span>
+                            <span class="text-lg font-semibold text-green-600">
+                                {{ servers|selectattr('status', 'equalto', 'active')|list|length if servers else 0 }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Under vedlikehold</span>
+                            <span class="text-lg font-semibold text-yellow-600">
+                                {{ servers|selectattr('status', 'equalto', 'maintenance')|list|length if servers else 0 }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

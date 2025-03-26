@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login - Server Hosting{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-12rem)] flex items-center justify-center">
+    <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-lg">
+        <div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Admin Innlogging
+            </h2>
+        </div>
+        <form method="POST" action="{{ url_for('admin_login') }}" class="mt-8 space-y-6">
+            <div class="rounded-md shadow-sm -space-y-px">
+                <div>
+                    <label for="username" class="sr-only">Brukernavn</label>
+                    <input id="username" name="username" type="text" required 
+                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" 
+                           placeholder="Brukernavn">
+                </div>
+                <div>
+                    <label for="password" class="sr-only">Passord</label>
+                    <div class="relative">
+                        <input id="password" name="password" type="password" required 
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" 
+                               placeholder="Passord">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center toggle-password">
+                            <i class="fas fa-eye text-gray-400 hover:text-gray-500"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" 
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Logg inn som admin
+                </button>
+            </div>
+        </form>
+
+        <div class="text-center">
+            <p class="text-sm text-gray-600">
+                <a href="{{ url_for('login') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                    Gå tilbake til vanlig innlogging
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelector('.toggle-password').addEventListener('click', function() {
+    const input = this.previousElementSibling;
+    const icon = this.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+});
+</script>
+{% endblock %} 
